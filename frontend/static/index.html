@@ -15,24 +15,46 @@
 
     <section class="input-section">
       <label for="document-input">Paste document text for audit:</label>
+
+      <div class="demo-bar">
+        <span>Load demo document:</span>
+        <button class="demo-btn" onclick="loadDemo('invoice_duplicate')">Duplicate invoice</button>
+        <button class="demo-btn" onclick="loadDemo('blocked_supplier')">Blocked supplier</button>
+        <button class="demo-btn" onclick="loadDemo('price_outlier')">Price outlier</button>
+        <button class="demo-btn" onclick="loadDemo('contract_ok')">Clean contract</button>
+      </div>
+
       <textarea
         id="document-input"
         placeholder="Paste invoice, contract, or addendum text here…"
         rows="10"
       ></textarea>
-      <button id="audit-btn" onclick="startAudit()">Run Audit</button>
+
+      <div class="btn-row">
+        <button id="audit-btn" onclick="startAudit()">Run Audit</button>
+        <button class="demo-btn secondary" onclick="runMockAudit()">▶ Demo (mock response)</button>
+      </div>
     </section>
 
     <section id="status-bar" class="status-bar hidden"></section>
 
     <section id="report-section" class="report-section hidden">
-      <h2>Audit Report <span id="streaming-indicator" class="streaming-dot">●</span></h2>
+      <h2>
+        Audit Report
+        <span id="streaming-indicator" class="streaming-dot">●</span>
+        <span id="risk-badge" class="risk-badge hidden"></span>
+      </h2>
       <div id="report-content" class="report-content"></div>
     </section>
 
     <section id="citations-panel" class="citations-panel hidden">
       <h3>Source Citations</h3>
       <div id="citations-list"></div>
+    </section>
+
+    <section id="policy-panel" class="policy-panel hidden">
+      <h3>Policy Checks</h3>
+      <div id="policy-list"></div>
     </section>
   </div>
 
