@@ -93,7 +93,7 @@ Cada componente mapeia uma capacidade específica da API Claude:
 ## Configuração
 
 ```bash
-git clone https://github.com/robertofortes23/compliance-watch.git
+git clone https://github.com/robertogfortes/compliance-watch.git
 cd compliance-watch
 cp .env.example .env
 # preencha ANTHROPIC_API_KEY e VOYAGE_API_KEY

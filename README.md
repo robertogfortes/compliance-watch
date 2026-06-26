@@ -93,7 +93,7 @@ Each component maps to a specific capability of the Claude API:
 ## Setup
 
 ```bash
-git clone https://github.com/robertofortes23/compliance-watch.git
+git clone https://github.com/robertogfortes/compliance-watch.git
 cd compliance-watch
 cp .env.example .env
 # fill in ANTHROPIC_API_KEY and VOYAGE_API_KEY

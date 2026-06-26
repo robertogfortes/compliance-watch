@@ -114,7 +114,7 @@ claude mcp add compliance uv run mcp_server/server.py   # register with Claude C
 ## Installation
 
 ```bash
-git clone https://github.com/robertofortes23/compliance-watch.git
+git clone https://github.com/robertogfortes/compliance-watch.git
 cd compliance-watch
 
 cp .env.example .env
