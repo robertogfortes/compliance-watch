@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 VOYAGE_API_KEY = os.getenv("VOYAGE_API_KEY", "")
 
 # Model aliases — Haiku for cheap generation/triage, Sonnet for analysis, Opus for high-risk review
