@@ -22,7 +22,9 @@ ComplianceWatch sinaliza anomalias em documentos financeiros internos (faturas, 
 |---|---|
 | ![Auditoria valor atípico](docs/screenshots/04-price-outlier-high-risk.png) | ![Auditoria contrato limpo](docs/screenshots/05-clean-contract-low-risk.png) |
 
-> **Experimente:** abra `frontend/demo.html` em qualquer navegador — sem servidor nem chave de API.
+> **Experimente sem chave de API:** abra `frontend/demo.html` diretamente no navegador — sem servidor.
+>
+> **Modo real (Claude de verdade):** adicione `ANTHROPIC_API_KEY` ao `.env`, execute `python frontend/app.py` e abra `http://localhost:8080`. Veja [`docs/dev-setup.md`](docs/dev-setup.md) para o guia completo de migração de demo para produção.
 
 ## Arquitetura
 
