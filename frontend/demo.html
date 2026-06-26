@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ComplianceWatch — Demo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f0f4f8; color: #1a1a1a; line-height: 1.6; }
+    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1rem; }
+    header { margin-bottom: 2rem; border-bottom: 3px solid #2563eb; padding-bottom: 1rem; display: flex; align-items: baseline; gap: 1.2rem; }
+    h1 { font-size: 1.9rem; color: #1e3a8a; letter-spacing: -0.5px; }
+    .subtitle { color: #6b7280; font-size: 0.88rem; }
+    .demo-bar { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; padding: 0.5rem 0.75rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; font-size: 0.85rem; color: #374151; }
+    .demo-btn { padding: 0.3rem 0.8rem; background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; border-radius: 4px; font-size: 0.82rem; cursor: pointer; transition: background 0.15s; }
+    .demo-btn:hover { background: #c7d2fe; }
+    .demo-btn.run { background: #f0fdf4; color: #166534; border-color: #bbf7d0; margin-left: 0.5rem; }
+    .demo-btn.run:hover { background: #bbf7d0; }
+    .input-section { margin-bottom: 1.5rem; }
+    .input-section label { display: block; font-weight: 600; margin-bottom: 0.4rem; }
+    textarea { width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-family: monospace; font-size: 0.85rem; resize: vertical; background: #fff; }
+    .btn-row { display: flex; align-items: center; margin-top: 0.75rem; gap: 0.5rem; }
+    .status-bar { padding: 0.5rem 0.75rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; font-size: 0.9rem; color: #1e40af; margin-bottom: 1rem; }
+    .report-section { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+    .report-section h2 { font-size: 1.05rem; margin-bottom: 1rem; color: #1e3a8a; display: flex; align-items: center; gap: 0.6rem; }
+    .streaming-dot { color: #10b981; animation: pulse 1s infinite; font-size: 0.7rem; }
+    .streaming-dot.done { animation: none; color: #6b7280; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+    .risk-badge { padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+    .risk-high   { background: #fee2e2; color: #dc2626; }
+    .risk-medium { background: #fef3c7; color: #b45309; }
+    .risk-low    { background: #dcfce7; color: #16a34a; }
+    .report-content { white-space: pre-wrap; font-size: 0.88rem; line-height: 1.75; }
+    .cited-text { background: #fef9c3; border-bottom: 2px solid #fbbf24; cursor: pointer; }
+    .citations-panel, .policy-panel { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+    .citations-panel h3, .policy-panel h3 { font-size: 0.95rem; margin-bottom: 0.75rem; color: #374151; font-weight: 600; }
+    .citation-item { padding: 0.6rem 0.75rem; border-left: 3px solid #2563eb; margin-bottom: 0.6rem; background: #f8fafc; border-radius: 0 4px 4px 0; font-size: 0.84rem; cursor: pointer; transition: background .15s; }
+    .citation-item:hover { background: #eff6ff; }
+    .cite-label { font-weight: 600; color: #1e3a8a; font-size: 0.78rem; margin-bottom: 0.15rem; }
+    .cite-text { color: #374151; font-style: italic; }
+    .policy-row { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.55rem 0; border-bottom: 1px solid #f3f4f6; font-size: 0.86rem; }
+    .policy-row:last-child { border-bottom: none; }
+    .policy-tag { flex: 0 0 auto; font-weight: 700; font-size: 0.78rem; padding: 0.15rem 0.5rem; border-radius: 4px; min-width: 4.5rem; text-align: center; }
+    .tag-pass { background: #dcfce7; color: #15803d; }
+    .tag-flag { background: #fee2e2; color: #b91c1c; }
+    .tag-na   { background: #f3f4f6; color: #6b7280; }
+    .policy-desc { flex: 1; color: #374151; }
+    .policy-confidence { flex: 0 0 auto; font-size: 0.78rem; color: #6b7280; font-style: italic; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>ComplianceWatch</h1>
+    <p class="subtitle">Internal compliance audit assistant — all findings require human review</p>
+  </header>
+
+  <section class="input-section">
+    <label>Load demo document:</label>
+    <div class="demo-bar">
+      <button class="demo-btn" onclick="loadDemo('invoice_duplicate')">Duplicate invoice</button>
+      <button class="demo-btn" onclick="loadDemo('blocked_supplier')">Blocked supplier</button>
+      <button class="demo-btn" onclick="loadDemo('price_outlier')">Price outlier</button>
+      <button class="demo-btn" onclick="loadDemo('contract_ok')">Clean contract</button>
+    </div>
+    <textarea id="doc" rows="9" placeholder="Paste or load a document above…"></textarea>
+    <div class="btn-row">
+      <button class="demo-btn run" onclick="runMock()">▶ Run Audit (demo)</button>
+    </div>
+  </section>
+
+  <div id="status" class="status-bar hidden"></div>
+
+  <section id="report-section" class="report-section hidden">
+    <h2>
+      Audit Report
+      <span id="dot" class="streaming-dot">●</span>
+      <span id="badge" class="risk-badge hidden"></span>
+    </h2>
+    <div id="report" class="report-content"></div>
+  </section>
+
+  <section id="policy-panel" class="policy-panel hidden">
+    <h3>Policy Checks</h3>
+    <div id="policy-list"></div>
+  </section>
+
+  <section id="citations-panel" class="citations-panel hidden">
+    <h3>Source Citations</h3>
+    <div id="citations-list"></div>
+  </section>
+</div>
+
+<script>
+const DOCS = {
+  invoice_duplicate:`INVOICE
+Document No: INV-CRT-2024-088
+Supplier: Cortex Supply Chain Ltda
+Issue Date: 2024-06-01
+Service: Raw material batch #RM-2024-C88
+Total: BRL 52,000.00
+
+Note: Previous invoice INV-CRT-2024-055 submitted on 2024-05-15
+for the same supplier and value (BRL 52,000.00).`,
+
+  blocked_supplier:`INVOICE
+Document No: INV-ORB-2024-014
+Supplier: Orbita Services ME
+Issue Date: 2024-07-08
+Service: Janitorial and facilities management — Building B
+Total: BRL 9,400.00`,
+
+  price_outlier:`SERVICE CONTRACT
+Contract No: CTR-FLX-2024-009
+Counterpart: Fluxion Services Ltda
+Effective Date: 2024-08-01
+Expiry Date: 2025-07-31
+Scope: Monthly office cleaning — Buildings A, B and C
+Monthly Value: BRL 45,000.00
+Annual Value: BRL 540,000.00
+
+Second quotation: Not on file.`,
+
+  contract_ok:`SERVICE CONTRACT
+Contract No: CTR-VLT-2024-007
+Counterpart: Veltron Technology Partners
+Effective Date: 2024-01-10
+Expiry Date: 2024-12-31
+Scope: Annual software licensing and ERP support
+Annual Value: BRL 96,000.00 (12 x BRL 8,000.00)
+
+Second quotation obtained: YES
+  Ref: QUOT-VLT-2023-19 — BRL 98,400.00
+  Ref: QUOT-AUR-2023-22 — BRL 101,000.00`
+};
+
+const MOCKS = {
+  invoice_duplicate:{risk:"HIGH",report:`COMPLIANCE AUDIT REPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Document Summary
+  Type:        Invoice
+  Document No: INV-CRT-2024-088
+  Supplier:    Cortex Supply Chain Ltda
+  Value:       BRL 52,000.00
+  Date:        2024-06-01
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Compliance Check Results
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+POL-PROC-001 (Second quotation)
+  Finding:    N/A — policy applies to contracts, not invoices.
+
+POL-PROC-002 (Blocked supplier)
+  Finding:    FLAG ⚠
+  Confidence: 9/10
+  Justification: Cortex Supply Chain Ltda (registry ID SUP-005) has status
+  "suspended" in the internal supplier registry. Reason: "duplicate billing
+  investigation ongoing since 2024-02-28."
+  citation: "Supplier: Cortex Supply Chain Ltda"
+
+POL-PROC-003 (Price outlier)
+  Finding:    PASS
+  Confidence: 7/10
+  Justification: BRL 52,000 is within 1.8 std dev of the raw materials
+  category historical average (mean: BRL 50,000, σ: BRL 2,000).
+  citation: "Total: BRL 52,000.00"
+
+POL-PROC-004 (Duplicate payment)
+  Finding:    FLAG ⚠
+  Confidence: 10/10
+  Justification: Invoice INV-CRT-2024-055 (2024-05-15) was submitted by the
+  same supplier for the identical value of BRL 52,000.00 — within the 90-day
+  duplicate detection window. This is a confirmed duplicate risk.
+  citation: "Previous invoice INV-CRT-2024-055 submitted on 2024-05-15 for
+  the same supplier and value (BRL 52,000.00)."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Overall Risk Assessment: HIGH
+
+Recommended Action:
+  SUSPEND payment. Forward to legal and procurement teams.
+  Cross-reference with INV-CRT-2024-055 to confirm both were processed.
+  This finding requires human review before any payment is authorised.`,
+  policies:[
+    {tag:"N/A", label:"POL-PROC-001", desc:"Second quotation — not applicable to invoices.", conf:null},
+    {tag:"FLAG",label:"POL-PROC-002", desc:"Supplier suspended (billing investigation since 2024-02-28).", conf:"9/10"},
+    {tag:"PASS",label:"POL-PROC-003", desc:"BRL 52,000 within 1.8 std dev of raw materials average.", conf:"7/10"},
+    {tag:"FLAG",label:"POL-PROC-004", desc:"Duplicate confirmed: same supplier + same value, 17 days apart.", conf:"10/10"},
+  ],
+  citations:[
+    {label:"Supplier name — header", text:"Supplier: Cortex Supply Chain Ltda"},
+    {label:"Invoice value — footer", text:"Total: BRL 52,000.00"},
+    {label:"Duplicate note — document body", text:"Previous invoice INV-CRT-2024-055 submitted on 2024-05-15 for the same supplier and value (BRL 52,000.00)."},
+  ]},
+
+  blocked_supplier:{risk:"HIGH",report:`COMPLIANCE AUDIT REPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Document Summary
+  Type:        Invoice
+  Document No: INV-ORB-2024-014
+  Supplier:    Orbita Services ME
+  Value:       BRL 9,400.00
+  Date:        2024-07-08
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Compliance Check Results
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+POL-PROC-001 (Second quotation)
+  Finding:    N/A — policy applies to contracts, not invoices.
+
+POL-PROC-002 (Blocked supplier)
+  Finding:    FLAG ⚠
+  Confidence: 10/10
+  Justification: Orbita Services ME (registry ID SUP-007) is on the
+  internal blocked-supplier list. Reason: "Contract signed without mandatory
+  second quotation — policy violation ref. POL-PROC-003" (added 2023-11-14
+  by internal audit).
+  citation: "Supplier: Orbita Services ME"
+
+POL-PROC-003 (Price outlier)
+  Finding:    PASS
+  Confidence: 8/10
+  Justification: BRL 9,400 is within expected range for facilities
+  (historical mean: BRL 8,300, σ: BRL 700).
+  citation: "Total: BRL 9,400.00"
+
+POL-PROC-004 (Duplicate payment)
+  Finding:    PASS
+  Confidence: 9/10
+  Justification: No duplicate submission found in the 90-day window.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Overall Risk Assessment: HIGH
+
+Recommended Action:
+  SUSPEND payment. Orbita Services ME is blocked following an internal
+  audit finding. Formal compliance review and procurement director approval
+  required before reactivation. Human review mandatory.`,
+  policies:[
+    {tag:"N/A", label:"POL-PROC-001", desc:"Not applicable to invoices.", conf:null},
+    {tag:"FLAG",label:"POL-PROC-002", desc:"Orbita Services ME is on the blocked list (added 2023-11-14 by internal audit).", conf:"10/10"},
+    {tag:"PASS",label:"POL-PROC-003", desc:"BRL 9,400 within expected range for facilities (mean BRL 8,300, σ 700).", conf:"8/10"},
+    {tag:"PASS",label:"POL-PROC-004", desc:"No duplicate found in 90-day window.", conf:"9/10"},
+  ],
+  citations:[
+    {label:"Supplier name — header", text:"Supplier: Orbita Services ME"},
+    {label:"Invoice value — footer", text:"Total: BRL 9,400.00"},
+  ]},
+
+  price_outlier:{risk:"HIGH",report:`COMPLIANCE AUDIT REPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Document Summary
+  Type:            Contract
+  Document No:     CTR-FLX-2024-009
+  Supplier:        Fluxion Services Ltda
+  Value:           BRL 45,000.00 / month  |  BRL 540,000.00 annual
+  Effective Date:  2024-08-01
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Compliance Check Results
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+POL-PROC-001 (Second quotation — contracts > BRL 50,000)
+  Finding:    FLAG ⚠
+  Confidence: 10/10
+  Justification: Annual value of BRL 540,000 exceeds the BRL 50,000 threshold.
+  No evidence of a second quotation is present in the document.
+  citation: "Second quotation: Not on file."
+
+POL-PROC-002 (Blocked supplier)
+  Finding:    PASS
+  Confidence: 10/10
+  Justification: Fluxion Services Ltda does not appear on the blocked list.
+
+POL-PROC-003 (Price outlier)
+  Finding:    FLAG ⚠
+  Confidence: 9/10
+  Justification: Historical average for facilities/cleaning is BRL 8,200 ± 600/month.
+  The contract value of BRL 45,000/month is +61 standard deviations above the mean.
+  This is a critical price anomaly.
+  citation: "Monthly Value: BRL 45,000.00"
+
+POL-PROC-004 (Duplicate payment)
+  Finding:    N/A — applies to invoices, not contracts.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Overall Risk Assessment: HIGH
+
+Recommended Action:
+  DO NOT APPROVE. Two critical flags:
+  1. Missing second quotation on a contract exceeding BRL 50,000.
+  2. Monthly value is ~5.5× the market average for comparable services.
+  Escalate to procurement director. Request independent benchmark and at
+  least one competing quote before any signature is authorised.`,
+  policies:[
+    {tag:"FLAG",label:"POL-PROC-001", desc:"Annual value BRL 540k — no second quotation on file.", conf:"10/10"},
+    {tag:"PASS",label:"POL-PROC-002", desc:"Fluxion Services Ltda not on blocked list.", conf:"10/10"},
+    {tag:"FLAG",label:"POL-PROC-003", desc:"BRL 45,000/month is +61 std dev above facilities mean (BRL 8,200 ± 600).", conf:"9/10"},
+    {tag:"N/A", label:"POL-PROC-004", desc:"Duplicate check not applicable to contracts.", conf:null},
+  ],
+  citations:[
+    {label:"Missing quotation — document body", text:"Second quotation: Not on file."},
+    {label:"Monthly value — contract body", text:"Monthly Value: BRL 45,000.00"},
+  ]},
+
+  contract_ok:{risk:"LOW",report:`COMPLIANCE AUDIT REPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Document Summary
+  Type:            Contract
+  Document No:     CTR-VLT-2024-007
+  Supplier:        Veltron Technology Partners
+  Value:           BRL 96,000.00 annual  (BRL 8,000 / month)
+  Effective Date:  2024-01-10
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Compliance Check Results
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+POL-PROC-001 (Second quotation — contracts > BRL 50,000)
+  Finding:    PASS
+  Confidence: 10/10
+  Justification: Two quotations are on file — QUOT-VLT-2023-19 (BRL 98,400)
+  and QUOT-AUR-2023-22 (BRL 101,000). Veltron submitted the lowest bid.
+  citation: "Second quotation obtained: YES / Ref: QUOT-VLT-2023-19 — BRL 98,400.00"
+
+POL-PROC-002 (Blocked supplier)
+  Finding:    PASS
+  Confidence: 10/10
+  Justification: Veltron Technology Partners (SUP-003) is active. Minor note
+  on file: "Annual renewal pending review" — does not block the contract.
+  citation: "Counterpart: Veltron Technology Partners"
+
+POL-PROC-003 (Price outlier)
+  Finding:    PASS
+  Confidence: 9/10
+  Justification: BRL 96,000/year is within 0.3 std dev of the software
+  licensing category average (mean: BRL 94,333, σ: BRL 5,200).
+  citation: "Annual Value: BRL 96,000.00"
+
+POL-PROC-004 (Duplicate payment)
+  Finding:    N/A — applies to invoices, not contracts.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Overall Risk Assessment: LOW
+
+Recommended Action:
+  Document appears fully compliant. All checks passed. Minor advisory:
+  verify Veltron Technology Partners annual renewal status before the
+  contract expiry on 2024-12-31. Cleared for approval.`,
+  policies:[
+    {tag:"PASS",label:"POL-PROC-001", desc:"Two quotations on file. Veltron is lowest bidder.", conf:"10/10"},
+    {tag:"PASS",label:"POL-PROC-002", desc:"SUP-003 active. Annual renewal note — not blocking.", conf:"10/10"},
+    {tag:"PASS",label:"POL-PROC-003", desc:"BRL 96,000/year within 0.3 std dev of software licensing average.", conf:"9/10"},
+    {tag:"N/A", label:"POL-PROC-004", desc:"Duplicate check not applicable to contracts.", conf:null},
+  ],
+  citations:[
+    {label:"Second quotation evidence — footer", text:"Second quotation obtained: YES / Ref: QUOT-VLT-2023-19 — BRL 98,400.00"},
+    {label:"Supplier name — header", text:"Counterpart: Veltron Technology Partners"},
+    {label:"Contract value — body", text:"Annual Value: BRL 96,000.00"},
+  ]},
+};
+
+function loadDemo(k) { document.getElementById("doc").value = DOCS[k]||""; }
+
+function runMock() {
+  const doc = document.getElementById("doc").value.trim();
+  if (!doc) { alert("Load a demo document first."); return; }
+
+  // detect key
+  let key = "invoice_duplicate";
+  for (const [k,v] of Object.entries(DOCS)) {
+    if (doc.includes(v.slice(20,60).trim())) { key=k; break; }
+  }
+  const m = MOCKS[key]||MOCKS["invoice_duplicate"];
+
+  // reset
+  document.getElementById("report").textContent = "";
+  document.getElementById("policy-panel").classList.add("hidden");
+  document.getElementById("citations-panel").classList.add("hidden");
+  document.getElementById("badge").classList.add("hidden");
+  document.getElementById("report-section").classList.remove("hidden");
+  document.getElementById("dot").classList.remove("done");
+  document.getElementById("status").textContent = "Analysing with Claude…";
+  document.getElementById("status").classList.remove("hidden");
+
+  // stream text
+  let i=0;
+  const txt = m.report;
+  const iv = setInterval(()=>{
+    const c = Math.floor(Math.random()*10)+3;
+    document.getElementById("report").textContent += txt.slice(i,i+c);
+    i+=c;
+    if (i>=txt.length) { clearInterval(iv); finish(m); }
+  }, 16);
+  setTimeout(()=>document.getElementById("status").classList.add("hidden"), 800);
+}
+
+function finish(m) {
+  document.getElementById("dot").classList.add("done");
+
+  const badge = document.getElementById("badge");
+  badge.textContent = m.risk+" RISK";
+  badge.className = "risk-badge risk-"+m.risk.toLowerCase();
+  badge.classList.remove("hidden");
+
+  // policies
+  const pl = document.getElementById("policy-list");
+  pl.innerHTML="";
+  m.policies.forEach(p=>{
+    const r=document.createElement("div"); r.className="policy-row";
+    const cls = p.tag==="FLAG"?"tag-flag":p.tag==="PASS"?"tag-pass":"tag-na";
+    r.innerHTML=`<span class="policy-tag ${cls}">${p.tag}</span><span class="policy-desc"><strong>${esc(p.label)}</strong> — ${esc(p.desc)}</span>${p.conf?`<span class="policy-confidence">conf. ${p.conf}</span>`:""}`;
+    pl.appendChild(r);
+  });
+  document.getElementById("policy-panel").classList.remove("hidden");
+
+  // citations
+  const cl = document.getElementById("citations-list");
+  cl.innerHTML="";
+  m.citations.forEach((c,i)=>{
+    const el=document.createElement("div"); el.className="citation-item";
+    el.innerHTML=`<div class="cite-label">${esc(c.label)}</div><div class="cite-text">"${esc(c.text)}"</div>`;
+    cl.appendChild(el);
+  });
+  document.getElementById("citations-panel").classList.remove("hidden");
+
+  // highlight
+  let html = esc(document.getElementById("report").textContent);
+  m.citations.forEach(c=>{
+    const e=esc(c.text.slice(0,50));
+    html=html.replace(e,`<span class="cited-text">${e}</span>`);
+  });
+  document.getElementById("report").innerHTML=html;
+}
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
+</script>
+</body>
+</html>
