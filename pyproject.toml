@@ -1,0 +1,32 @@
+[project]
+name = "compliance-watch"
+version = "0.1.0"
+description = "Contract and invoice audit system using the Claude API"
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.40.0",
+    "voyageai>=0.3.0",
+    "python-dotenv>=1.0.0",
+    "rank-bm25>=0.2.2",
+    "mcp[cli]>=1.0.0",
+    "fastmcp>=0.1.0",
+    "pypdf>=4.0.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.4.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
