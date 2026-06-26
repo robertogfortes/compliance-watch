@@ -6,6 +6,18 @@ ComplianceWatch flags anomalies in internal financial documents (invoices, contr
 
 **All data used in this project is 100% synthetic.** No real company, person, or public entity is referenced anywhere — in code, datasets, examples, or documentation. See [`docs/data-disclaimer.md`](docs/data-disclaimer.md).
 
+## Screenshots
+
+| Duplicate invoice — HIGH RISK | Blocked supplier — HIGH RISK |
+|---|---|
+| ![Duplicate invoice audit](docs/screenshots/02-duplicate-invoice-high-risk.png) | ![Blocked supplier audit](docs/screenshots/03-blocked-supplier-high-risk.png) |
+
+| Price outlier — HIGH RISK | Clean contract — LOW RISK |
+|---|---|
+| ![Price outlier audit](docs/screenshots/04-price-outlier-high-risk.png) | ![Clean contract audit](docs/screenshots/05-clean-contract-low-risk.png) |
+
+> **Try it:** open `frontend/demo.html` in any browser — no server or API key required.
+
 ## Architecture
 
 ```
