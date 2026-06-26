@@ -41,3 +41,7 @@ uv sync
 ```
 
 See [`docs/dev-setup.md`](docs/dev-setup.md) for full instructions.
+
+## Inspiration
+
+This project was built as an applied capstone while completing the **[Building with the Claude API](https://verify.skilljar.com/c/bgpvpoxjuqsg)** course. Each system component maps directly to a module covered in the course — from basic API access and tool use through RAG, evaluation pipelines, MCP servers, and multi-step agentic workflows.
