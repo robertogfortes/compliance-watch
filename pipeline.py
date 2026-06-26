@@ -198,11 +198,13 @@ def gerar_e_revisar(
         model=DEFAULT_MODEL,
         temperature=MAX_ANALYSIS_TEMPERATURE,
     )
-    draft = text_from_message(
-        next(m for m in reversed(messages) if m["role"] == "assistant"
-             and isinstance(m["content"], list))
-        if any(m["role"] == "assistant" for m in messages)
-        else type("M", (), {"content": [type("B", (), {"type": "text", "text": ""})()]})()
+    last_msg = next(
+        m for m in reversed(messages)
+        if m["role"] == "assistant" and isinstance(m["content"], list)
+    )
+    draft = "\n".join(
+        block.text for block in last_msg["content"]
+        if hasattr(block, "type") and block.type == "text"
     )
 
     # Second call — citation review pass

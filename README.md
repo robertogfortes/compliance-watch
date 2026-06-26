@@ -4,6 +4,12 @@
 
 ComplianceWatch flags anomalies in internal financial documents (invoices, contracts, addendums) for human compliance review. Every finding is traceable to an exact source excerpt with an explicit confidence level — never an opaque automatic accusation.
 
+---
+
+[🇺🇸 English](README.md) · [🇧🇷 Português](README.pt-br.md)
+
+---
+
 **All data used in this project is 100% synthetic.** No real company, person, or public entity is referenced anywhere — in code, datasets, examples, or documentation. See [`docs/data-disclaimer.md`](docs/data-disclaimer.md).
 
 ## Screenshots

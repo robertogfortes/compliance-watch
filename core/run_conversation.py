@@ -12,7 +12,7 @@ from core.run_tools import run_tools
 
 def run_conversation(
     messages: list,
-    tools: list = [],
+    tools: list | None = None,
     system=None,
     model: str | None = None,
     temperature: float = 0.2,
@@ -22,7 +22,7 @@ def run_conversation(
 
     Returns the updated messages list (same object, mutated in place).
     """
-    kwargs = {"tools": tools, "system": system, "temperature": temperature}
+    kwargs = {"tools": tools or [], "system": system, "temperature": temperature}
     if model:
         kwargs["model"] = model
 
