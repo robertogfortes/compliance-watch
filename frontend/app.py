@@ -39,6 +39,16 @@ class ComplianceHandler(BaseHTTPRequestHandler):
             self._serve_file("streaming_tools.js", "application/javascript")
         elif parsed.path == "/style.css":
             self._serve_file("style.css", "text/css")
+        elif parsed.path == "/audit-sse":
+            # SSE endpoint — EventSource always uses GET; document passed as ?doc= query param
+            params = parse_qs(parsed.query)
+            document_text = params.get("doc", [""])[0]
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self._stream_audit(document_text)
         else:
             self.send_response(404)
             self.end_headers()
@@ -51,18 +61,6 @@ class ComplianceHandler(BaseHTTPRequestHandler):
             body = self.rfile.read(length).decode("utf-8")
             data = json.loads(body) if body else {}
             document_text = data.get("document", "").strip()
-
-            self.send_response(200)
-            self.send_header("Content-Type", "text/event-stream")
-            self.send_header("Cache-Control", "no-cache")
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-
-            self._stream_audit(document_text)
-        elif parsed.path == "/audit-sse":
-            # GET-based SSE endpoint (query param: ?doc=...)
-            params = parse_qs(parsed.query)
-            document_text = params.get("doc", [""])[0]
 
             self.send_response(200)
             self.send_header("Content-Type", "text/event-stream")
