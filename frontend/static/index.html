@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ComplianceWatch</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ComplianceWatch</h1>
+      <p class="subtitle">Internal compliance audit assistant — all findings require human review</p>
+    </header>
+
+    <section class="input-section">
+      <label for="document-input">Paste document text for audit:</label>
+      <textarea
+        id="document-input"
+        placeholder="Paste invoice, contract, or addendum text here…"
+        rows="10"
+      ></textarea>
+      <button id="audit-btn" onclick="startAudit()">Run Audit</button>
+    </section>
+
+    <section id="status-bar" class="status-bar hidden"></section>
+
+    <section id="report-section" class="report-section hidden">
+      <h2>Audit Report <span id="streaming-indicator" class="streaming-dot">●</span></h2>
+      <div id="report-content" class="report-content"></div>
+    </section>
+
+    <section id="citations-panel" class="citations-panel hidden">
+      <h3>Source Citations</h3>
+      <div id="citations-list"></div>
+    </section>
+  </div>
+
+  <script src="/streaming_tools.js"></script>
+</body>
+</html>

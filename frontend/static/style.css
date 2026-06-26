@@ -1,0 +1,145 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f5f5f5;
+  color: #1a1a1a;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #2563eb;
+  padding-bottom: 1rem;
+}
+
+h1 { font-size: 1.8rem; color: #1e3a8a; }
+.subtitle { color: #6b7280; font-size: 0.9rem; margin-top: 0.25rem; }
+
+.input-section { margin-bottom: 1.5rem; }
+.input-section label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.85rem;
+  resize: vertical;
+  background: #fff;
+}
+
+button {
+  margin-top: 0.75rem;
+  padding: 0.6rem 1.4rem;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+button:hover { background: #1d4ed8; }
+button:disabled { background: #93c5fd; cursor: not-allowed; }
+
+.status-bar {
+  padding: 0.5rem 0.75rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #1e40af;
+  margin-bottom: 1rem;
+}
+
+.report-section {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.report-section h2 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: #1e3a8a;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.streaming-dot {
+  color: #10b981;
+  animation: pulse 1s infinite;
+  font-size: 0.7rem;
+}
+.streaming-dot.done { animation: none; color: #6b7280; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.report-content {
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+/* Inline citation markers */
+.citation-marker {
+  display: inline-block;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 3px;
+  padding: 0 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  margin: 0 2px;
+  border: 1px solid #93c5fd;
+  transition: background 0.15s;
+}
+.citation-marker:hover { background: #bfdbfe; }
+
+/* Highlighted citation in text */
+.cited-text {
+  background: #fef9c3;
+  border-bottom: 2px solid #fbbf24;
+  cursor: pointer;
+}
+.cited-text.active { background: #fde68a; }
+
+.citations-panel {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.citations-panel h3 { font-size: 1rem; margin-bottom: 0.75rem; color: #374151; }
+
+.citation-item {
+  padding: 0.6rem 0.75rem;
+  border-left: 3px solid #2563eb;
+  margin-bottom: 0.75rem;
+  background: #f8fafc;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.85rem;
+}
+.citation-item .cite-source { font-weight: 600; color: #1e3a8a; margin-bottom: 0.2rem; }
+.citation-item .cite-text { color: #374151; font-style: italic; }
+
+.flag-high { color: #dc2626; font-weight: 600; }
+.flag-medium { color: #d97706; font-weight: 600; }
+.flag-low { color: #16a34a; font-weight: 600; }
+
+.hidden { display: none !important; }
